@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title> Homework 17.05.2023 </title>
+  <style type="text/css">
+
+  </style>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+  <input type="text" id="inp" placeholder="Enter a text" value="" />
+  <button id="btn" onclick="convert()"> convert</button>
+  <button id="btn" onclick="unicSubString()"> convert</button>
+  <div id="out1"></div>
+  <div id="out2"></div>
+
+  <table id="table">
+    <thead>
+      <tr>
+        <th data-type="integer">ID</th>
+        <th data-type="date">Data</th>
+        <th data-type="text">Name</th>
+        <th data-type="double">Summ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>4</td>
+        <td>05.10.2004</td>
+        <td>Ivanov Petr</td>
+        <td>15750.50</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>10.10.2010</td>
+        <td>Semenov Alexey</td>
+        <td>10750.20</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>21.05.2018</td>
+        <td>Kovalev Evgeniy</td>
+        <td>23570.25</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>12.12.2008</td>
+        <td>Ponomarenko Sergey</td>
+        <td>20000.00</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>04.12.2001</td>
+        <td>Koptenko Dmitry</td>
+        <td>1980.00</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>29.07.2014</td>
+        <td>Sergeev Andrey</td>
+        <td>15050.50</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script>
+    const table = document.getElementById('table');
+    let colIndex = -1;
+
+    function sortTable(index, type, isSorted) {
+      const tbody = table.querySelector('tbody');
+      function compare(rowA, rowB) {
+        const rowDataA = rowA.cells[index].innerHTML;
+        const rowDataB = rowB.cells[index].innerHTML;
+
+        switch (type) {
+          case 'integer':
+          case 'double':
+            return rowDataA - rowDataB;
+            break;
+          case 'date':
+            const dateA = rowDataA.split('.').reverse().join('-');
+            const dateB = rowDataB.split('.').reverse().join('-');
+            return new Date(dateA).getTime() - new Date(dateB).getTime();
+            break;
+          case 'text':
+            if (rowDataA < rowDataB) return -1;
+            else if (rowDataA > rowDataB) return 1;
+            else return 0;
+            break;
+        }
+      }
+      let rows = [].slice.call(tbody.rows);
+      rows.sort(compare);
+      if (isSorted) rows.reverse();
+      table.removeChild(tbody);
+      for (let i = 0; i < rows.length; i++) {
+        tbody.appendChild(rows[i]);
+      }
+      table.appendChild(tbody);
+    }
+
+    table.addEventListener('click', e => {
+      const el = e.target;
+      if (el.nodeName !== 'TH') return;
+      const index = el.cellIndex;
+      const type = el.getAttribute('data-type');
+      sortTable(index, type, colIndex === index);
+      colIndex = (colIndex === index) ? -1 : index;
+    });
+
+    //////////////////////////////////////////////
+    function convert() {
+      let text = document.getElementById('inp').value;
+      let converted = [];
+      let len = text.length;
+      for (let i = 0; i < len; i++) {
+        converted.push(text.charCodeAt(i));
+      }
+      console.log(converted);
+      document.getElementById('out1').innerHTML = converted;
+    }
+    ///////////////////////////////////////////
+
+    function unicSubString() {
+      let longest = 0;
+      let currentSubstr = '';
+      let text = document.getElementById('inp').value;
+      for (let letter of text) {
+        if (!currentSubstr.includes(letter)) {
+          currentSubstr += letter;
+          longest = Math.max(currentSubstr.length, longest);
+        } else {
+          for (let i = 0; i < currentSubstr.length; i++) {
+            if (currentSubstr.charAt(i) === letter) {
+              currentSubstr.slice(i + 1);
+            }
+          }
+        }
+      }
+      document.getElementById('out2').innerHTML = longest;
+    }
+
+  </script>
+</body>
+
+</html>
